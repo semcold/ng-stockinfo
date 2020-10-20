@@ -1,0 +1,34 @@
+.stockdata {
+	height: 100vh;
+	//margin-top: 10vh;
+}
+
+
+
+.data-search {
+	height: 10vh;
+	background: rgba(255, 255, 255, .2);
+}
+#gridContainer {
+
+	height: 80vh;
+	font-size: 12px;
+}
+::ng-deep .master-detail-caption {
+	padding: 0 0 5px 10px;
+	font-size: 10px;
+	font-weight: bold;
+}
+
+::ng-deep #gridContainer .dx-datagrid-content tr.dx-data-row {
+	cursor: pointer;
+}
+
+::ng-deep #gridContainer:hover .dx-datagrid-content:hover tr.dx-data-row:hover {
+	background: rgba(255, 255, 255, .2);
+	transition: background .3s ease-in-out;
+}
+.dx-row:hover {
+	background: rgba(255, 255, 255, .2);
+	transition: background .3s ease-in-out;
+}
