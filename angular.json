@@ -57,8 +57,7 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "src/assets/styles/js/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.js",
-              "src/assets/styles/js/inspinia.js"
+              "node_modules/bootstrap/dist/js/bootstrap.js"
             ]
           },
           "configurations": {

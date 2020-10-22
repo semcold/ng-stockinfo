@@ -1,10 +1,11 @@
+import { StockCandles } from './../../interfaces';
 import { StockSymbol, CompanyProfile } from './../../services/data.service';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import DataSource from 'devextreme/data/data_source';
-import ArrayStore from 'devextreme/data/array_store';
 import { DxDataGridComponent } from 'devextreme-angular';
+
 
 @Component({
   selector: 'app-data-grid',
@@ -14,7 +15,9 @@ import { DxDataGridComponent } from 'devextreme-angular';
 export class DataGridComponent implements OnInit, OnDestroy {
 
   @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    orders: Order[];
+
+  animation = true;
+    //orders: Order[];
     saleAmountHeaderFilter: any;
     applyFilterTypes: any;
     currentFilter: any;
@@ -29,12 +32,15 @@ export class DataGridComponent implements OnInit, OnDestroy {
   companyProfile: any;
   cProfile: any = [];
   stockSymbol: StockSymbol[];
+  stockCandles: StockCandles[]=[];
   cProfileDataSourceStorage: CompanyProfile[]=[];
   getSub: Subscription;
   cProfileSub: Subscription;
   symbol: string;
 
-  constructor( private dataService : DataService ) {
+  dataSource: DataSource;
+
+  constructor( private dataService : DataService) {
 
      }
 
@@ -56,38 +62,88 @@ export class DataGridComponent implements OnInit, OnDestroy {
         console.log(result);
       });
 
-    this.companyProfile = [];
-    this.cProfileSub = this.dataService.getBySymbol()
-      .subscribe((res) => {
-        this.companyProfile = res;
-        console.log(res);
-        this.cProfileDataSourceStorage.push(this.companyProfile);
-        //this.companyProfile = Object.keys(obj).map(key => ({key, obj}));
+    // this.companyProfile = [];
+    // this.cProfileSub = this.dataService.getBySymbol(this.symbol)
+    //   .subscribe((res) => {
+    //     let item = res;
+    //     console.log(res);
+    //     this.cProfileDataSourceStorage.push(item);
 
+    //   });
+  }
+
+  getcProfileDataSourceStorage(cProfile) {
+    console.log(this.cProfileDataSourceStorage);
+    console.log('у меня тут: ' + cProfile);
+    //this.symbol = cProfile;
+    this.dataService.displaySymbol = cProfile;
+    this.dataService.candles = this.stockCandles;
+    console.log(this.dataService.candles);
+
+
+    if (cProfile == undefined)
+      {
+        console.log('пусто')
+        return
+      }
+    else {
+      console.log('не пусто: ' + this.cProfileDataSourceStorage);
+      return this.cProfileDataSourceStorage;
+    }
+
+  }
+
+  getBySymbol() {
+    this.dataService.getBySymbol()
+      .subscribe((res) => {
+        if (res==undefined || null) {
+          console.log('символов нет:' + res)
+        }
+        else {
+          let item = res;
+          console.log('result ' + JSON.stringify(res));
+          this.cProfileDataSourceStorage = [];
+          this.cProfileDataSourceStorage.push(item);
+          //this.companyProfile = Object.keys(obj).map(key => ({key, obj}));
+        }
+    });
+
+    this.dataService.getStockCandles()
+      .subscribe((candle) => {
+        if (candle==undefined || candle.s=='no_data') {
+          console.log('свечей нет:' + candle)
+        }
+        else {
+          //let item = candle;
+        console.log(candle);
+        //this.stockPrices = res;
+        //this.stockPrices.push(item);
+        console.log('символ в график: ' + this.dataService.displaySymbol)
+        //return this.stockPrices
+
+        let candles = candle['t'].map(function(t,i) {
+          return {
+            c: candle['c'][i],
+            h: candle['h'][i],
+            l: candle['l'][i],
+            o: candle['o'][i],
+            t: new Date(t*1000),
+            s: candle['s'],
+            v: candle['v'][i],
+          }
+        })
+        this.stockCandles = [];
+        this.stockCandles.push(...candles);
+        console.log(this.stockCandles)
+        }
       });
   }
 
-  getcProfileDataSourceStorage(key) {
-    console.log(this.cProfileDataSourceStorage);
-    return this.cProfileDataSourceStorage;
-    // let item = this.cProfile.find((i) => i.key === key);
-    // if (!item) {
-    //     item = {
-    //         key: key,
-    //         dataSourceInstance: new DataSource({
-    //             store: new ArrayStore({
-    //                 data: this.cProfileDataSourceStorage,
-    //                 key: "name"
-    //             }),
-    //             filter: ["name", "=", key]
-    //         })
-    //     };
-    //     this.cProfileDataSourceStorage.push(item)
-    //     console.log(this.cProfileDataSourceStorage);
-    // }
-    // return item.dataSourceInstance;
+  clickRow() {
+    //this.cProfileDataSourceStorage = undefined;
+    console.log('был произведен клик: ' + this.symbol)
+    this.getBySymbol();
   }
-
 
 
 //   getTasks(key) {
@@ -113,11 +169,12 @@ export class DataGridComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
+    this.cProfileSub.unsubscribe();
     if (this.getSub) {
       this.getSub.unsubscribe();
     }
-    if (this.cProfileSub)
-      this.cProfileSub.unsubscribe();
+
+
   }
 
 }

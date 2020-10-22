@@ -11,16 +11,17 @@
         <dxo-reduction color="red"></dxo-reduction>
     </dxi-series>
     <dxo-common-series-settings
-        argumentField="date"
+        argumentField="t"
         type="candlestick">
     </dxo-common-series-settings>
     <dxo-legend itemTextPosition="left"></dxo-legend>
-    <dxi-value-axis [tickInterval]="1">
+    <dxi-value-axis>
+
         <dxo-title text="US dollars"></dxo-title>
         <dxo-label>
             <dxo-format
                 type="currency"
-                [precision]="0">
+                [precision]="1">
             </dxo-format>
         </dxo-label>
     </dxi-value-axis>
@@ -34,3 +35,15 @@
         [customizeTooltip]="customizeTooltip">
     </dxo-tooltip>
 </dx-chart>
+<div class="dx-field">
+    <div class="dx-field-label">Временное разрешение</div>
+    <div class="dx-field-value">
+        <dx-radio-group #eventRadioGroup
+            id="radio-group-with-selection"
+            [items]="resolutions"
+            [value]="resolutions[0]"
+            (onValueChanged)="onValueChanged($event)"
+            layout="horizontal">
+        </dx-radio-group>
+    </div>
+</div>

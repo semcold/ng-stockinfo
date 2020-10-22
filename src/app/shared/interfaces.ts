@@ -6,10 +6,16 @@ export interface StockSymbol {
   currency: string
 }
 
-export interface StockPrice {
-  date: Date
-  l: number
-  h: number
-  o: number
-  c: number
+export interface StockCandles {
+  c: [number]
+  h: [number]
+  l: [number]
+  o: [number]
+  s: [string]
+  t: Date
+  v: [number]
+}
+export interface ListResolution {
+  subject: any
+  priority: any
 }

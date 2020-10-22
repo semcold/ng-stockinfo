@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   token: 'bu5mtrv48v6qku346t8g',
-  APIURL: 'https://finnhub.io/api/v1/stock'
+  APIURL: 'https://finnhub.io/api/v1',
+  stock: 'stock'
 
 };
 

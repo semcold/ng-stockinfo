@@ -1,36 +1,31 @@
 <div class="stockdata">
-    <!-- <div class="input-group m-b">
-        <div class="input-group-prepend">
-                <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">Критерий для поиска</button>
-                <ul class="dropdown-menu">
-                    <li><a (click)="changeCriteria('description')">Name of company</a></li>
-                    <li><a (click)="changeCriteria('symbol')">Symbol</a></li>
-                </ul>
-        </div>
-        <input
-            type="text"
-            class="form-control"
-            [placeholder]="searchPlaceholder"
-            [(ngModel)]="searchStr"
-        >
-    </div> -->
+
 
     <dx-data-grid id="gridContainer"
     [dataSource]="stockSymbol"
     [masterDetail]="{ enabled: true, template: 'detail' }"
     keyExpr="symbol"
     [showBorders]="true"
+    (click) = "clickRow()"
     >
 
-    <dxo-filter-row
-        [visible]="showFilterRow"
-        [applyFilter]="currentFilter"></dxo-filter-row>
+    <div class="input-group m-b">
+        <dxo-search-panel
+        class="form-control"
+        [visible]="true"
+        [width]="340"
+        placeholder="Search...">
+        </dxo-search-panel>
+    </div>
 
     <dxi-column dataField="description" caption="Name"></dxi-column>
-    <dxi-column dataField="id" [width]="70"></dxi-column>
-    <dxi-column dataField="symbol"[width]="50"></dxi-column>
+    <dxi-column dataField="symbol"[width]="50"> </dxi-column>
     <dxi-column dataField="type" [width]="50"></dxi-column>
     <dxi-column dataField="currency" [width]="50"></dxi-column>
+    <!-- <div *dxTemplate="let cProfile of 'detail' | busFilter: searchStr: searchField">
+
+    </div> -->
+
     <!-- <dxi-column dataField="BirthDate" dataType="date"></dxi-column> -->
 
     <div *dxTemplate="let cProfile of 'detail'">
@@ -38,7 +33,8 @@
         <dx-data-grid
             [dataSource]="getcProfileDataSourceStorage(cProfile.key)"
             [showBorders]="true"
-            [columnAutoWidth]="true">
+            [columnAutoWidth]="true"
+            >
                 <dxi-column dataField="country"></dxi-column>
                 <dxi-column dataField="name"></dxi-column>
                 <dxi-column dataField="exchange"></dxi-column>
