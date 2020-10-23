@@ -1,11 +1,15 @@
 import { StockCandles } from './../../interfaces';
 import { StockSymbol, CompanyProfile } from './../../services/data.service';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, enableProdMode } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular';
+import ArrayStore from 'devextreme/data/array_store';
 
+if (!/localhost/.test(document.location.host)) {
+  enableProdMode();
+}
 
 @Component({
   selector: 'app-data-grid',
@@ -14,167 +18,199 @@ import { DxDataGridComponent } from 'devextreme-angular';
 })
 export class DataGridComponent implements OnInit, OnDestroy {
 
-  @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-
   animation = true;
-    //orders: Order[];
-    saleAmountHeaderFilter: any;
-    applyFilterTypes: any;
-    currentFilter: any;
-    showFilterRow: boolean;
-    showHeaderFilter: boolean;
 
-  searchStr = '';
-  searchValue = '';
-  searchPlaceholder = 'Name of Company';
-  searchField = 'name';
+  profilesDataSourceStorage: any;
+  profiles: CompanyProfile[] = [];
+  profile;
+  loadIndicatorVisible = false;
+  logo: string;
+
+  saleAmountHeaderFilter: any;
+  applyFilterTypes: any;
+  currentFilter: any;
+  showFilterRow: boolean;
+  showHeaderFilter: boolean;
 
   companyProfile: any;
   cProfile: any = [];
   stockSymbol: StockSymbol[];
-  stockCandles: StockCandles[]=[];
-  cProfileDataSourceStorage: CompanyProfile[]=[];
+  stockCandles: StockCandles[] = [];
+  cProfileDataSourceStorage: CompanyProfile[] = [];
   getSub: Subscription;
   cProfileSub: Subscription;
   symbol: string;
 
   dataSource: DataSource;
 
-  constructor( private dataService : DataService) {
+  constructor(
+    private dataService: DataService
+  ) {
+      this.profilesDataSourceStorage = [];
 
-     }
-
-
-     changeCriteria(field: string) {
-      const namesMap = {
-        name: 'Name of Company',
-        symbol: 'Symbol'
-      };
-      this.searchPlaceholder = namesMap[field];
-      this.searchField = field;
     }
 
-  ngOnInit(): void {
-    this.stockSymbol = [];
+  ngOnInit() {
     this.getSub = this.dataService.getStockSymbol()
       .subscribe((result) => {
         this.stockSymbol = result;
         console.log(result);
       });
+  }
 
-    // this.companyProfile = [];
-    // this.cProfileSub = this.dataService.getBySymbol(this.symbol)
-    //   .subscribe((res) => {
-    //     let item = res;
-    //     console.log(res);
-    //     this.cProfileDataSourceStorage.push(item);
+  getProfiles(key) {
+    this.dataService.displaySymbol = key;
+    this.dataService.candles = this.stockCandles;
+    // console.log(this.dataService.candles);
 
-    //   });
+
+    if (key === undefined)
+      {
+        console.log('пусто');
+      }
+    else {
+      console.log(this.profiles);
+      console.log('не пусто: ' + this.profilesDataSourceStorage);
+      return this.profiles;
+    }
   }
 
   getcProfileDataSourceStorage(cProfile) {
-    console.log(this.cProfileDataSourceStorage);
+    console.log(this.profiles);
     console.log('у меня тут: ' + cProfile);
-    //this.symbol = cProfile;
+    // this.symbol = cProfile;
     this.dataService.displaySymbol = cProfile;
     this.dataService.candles = this.stockCandles;
     console.log(this.dataService.candles);
 
 
-    if (cProfile == undefined)
+    if (cProfile === undefined)
       {
-        console.log('пусто')
-        return
+        console.log('пусто');
+        // this.loadIndicatorVisible = false;
+        return;
       }
     else {
-      console.log('не пусто: ' + this.cProfileDataSourceStorage);
-      return this.cProfileDataSourceStorage;
+      console.log(this.profiles);
+      return this.profiles;
     }
-
   }
+
+
 
   getBySymbol() {
     this.dataService.getBySymbol()
       .subscribe((res) => {
-        if (res==undefined || null) {
-          console.log('символов нет:' + res)
+        if (res === undefined || null || res.name === undefined) {
+          console.log('нет данных:' + res);
         }
         else {
-          let item = res;
-          console.log('result ' + JSON.stringify(res));
-          this.cProfileDataSourceStorage = [];
-          this.cProfileDataSourceStorage.push(item);
-          //this.companyProfile = Object.keys(obj).map(key => ({key, obj}));
+
+          const item = res;
+          item.symbol = this.dataService.displaySymbol;
+          if (this.profiles.find(x => x.symbol === item.symbol) === undefined) {
+            // this.profiles = [];
+            this.profiles.push(item);
+            this.loadIndicatorVisible = false;
+          }
+          // console.log('result ' + JSON.stringify(res));
+          // this.cProfileDataSourceStorage = [];
+          // this.cProfileDataSourceStorage.push(item);
+
         }
     });
 
-    this.dataService.getStockCandles()
-      .subscribe((candle) => {
-        if (candle==undefined || candle.s=='no_data') {
-          console.log('свечей нет:' + candle)
-        }
-        else {
-          //let item = candle;
-        console.log(candle);
-        //this.stockPrices = res;
-        //this.stockPrices.push(item);
-        console.log('символ в график: ' + this.dataService.displaySymbol)
-        //return this.stockPrices
 
-        let candles = candle['t'].map(function(t,i) {
-          return {
-            c: candle['c'][i],
-            h: candle['h'][i],
-            l: candle['l'][i],
-            o: candle['o'][i],
-            t: new Date(t*1000),
-            s: candle['s'],
-            v: candle['v'][i],
-          }
-        })
-        this.stockCandles = [];
-        this.stockCandles.push(...candles);
-        console.log(this.stockCandles)
-        }
-      });
+  }
+
+  setKey(key) {
+    const symbol = key;
+    this.dataService.displaySymbol = symbol; // saving symbol in Service
+    this.dataService.candles = []; // reading data for future candles in service
+    console.log(this.dataService.displaySymbol);
+    console.log(this.profile);
+    this.dataService.dateFrom = Math.floor(Math.abs(((new Date()).getTime() - (new Date()).getTime())/(24*60*60*1000)));
+    // this.dataService.dateTo = Math.floor(new Date().getTime()/1000);
+    // this.dataService.dateFrom = Math.floor(this.dataService.dateTo - (7*24*60*60));
+    return this.profile;
   }
 
   clickRow() {
-    //this.cProfileDataSourceStorage = undefined;
-    console.log('был произведен клик: ' + this.symbol)
-    this.getBySymbol();
+    console.log('был произведен клик: ' + this.dataService.displaySymbol);
+    this.getProfilesCompany();
+    this.loadIndicatorVisible = true;
   }
 
+  getProfilesCompany() {
+    // --------------------------------
+    // get data from Company Profile 2:
+    this.dataService.getBySymbol()
+      .subscribe((res) => {
+        if (res === undefined || null || res.name === undefined) {
+          console.log('нет данных:' + res);
+        }
+        else {
+          const item = res;
+          item.symbol = this.dataService.displaySymbol;
+          this.profiles.push(item);
+          this.loadIndicatorVisible = false;
+          this.dataService.companyName = item.name;
+          console.log('Я думаю ты нажал на: ' + item.name);
+          console.log('Текущий символ: ' + item.symbol);
+          console.log('Текущий символ: ' + item.symbol);
+          this.getUniqueCompany(this.dataService.displaySymbol); // sorting the stored list by unique symbol
+          // if (this.profiles.find(x => x.symbol === item.symbol) === undefined) {
+          // }
+        }
+    });
+    // --------------------------------
+    // get data for Stock Candles
+    // this.dataService.resolution = undefined;
+    // this.dataService.getStockCandles()
+    //   .subscribe((candle) => {
+    //     if (candle === undefined || candle.s === 'no_data') {
+    //       console.log('свечей нет:' + candle);
+    //     }
+    //     else {
+    //     // converting in readable format for devexpresse's candlestick:
+    //     const candles = candle.t.map((t, i) => ({
+    //         c: candle.c[i],
+    //         h: candle.h[i],
+    //         l: candle.l[i],
+    //         o: candle.o[i],
+    //         t: new Date(t * 1000),
+    //         s: candle.s,
+    //         v: candle.v[i],
+    //       }));
+    //     this.stockCandles = [];
+    //     this.stockCandles.push(...candles);
+    //     }
+    //   });
+      // --------------------------------
+  }
 
-//   getTasks(key) {
-//     let item = this.cProfileDataSourceStorage.find((i) => i.key === key);
-//     if (!item) {
-//         item = {
-//             key: key,
-//             dataSourceInstance: new DataSource({
-//                 store: new ArrayStore({
-//                     data: this.companyProfile,
-//                     key: "ID"
-//                 }),
-//                 //filter: ["EmployeeID", "=", key]
-//             })
-//         };
-//         this.cProfileDataSourceStorage.push(item)
-//     }
-//     return item.dataSourceInstance;
-// }
-
-
-
-
-
+  getUniqueCompany(key) {
+    this.profile = [];
+    let item = this.profilesDataSourceStorage.find((i) => i.key === key);
+    if (!item) {
+        item = {
+            key,
+            dataSourceInstance: new DataSource({
+                store: new ArrayStore({
+                    data: this.profiles,
+                    key: 'symbol'
+                }),
+                filter: ['symbol', '=', key]
+            })
+        };
+        this.profilesDataSourceStorage.push(item);
+    }
+    this.profile = item.dataSourceInstance;
+    console.log(this.profile._items.name);
+}
   ngOnDestroy() {
-    this.cProfileSub.unsubscribe();
     if (this.getSub) {
       this.getSub.unsubscribe();
     }
-
-
   }
-
 }

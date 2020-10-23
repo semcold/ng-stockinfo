@@ -1,9 +1,22 @@
+<div class="dx-field">
+    <!-- <div class="dx-field-label">Временное разрешение:</div> -->
+    <div class="dx-field-value-radio">
+        <dx-radio-group #eventRadioGroup
+            id="radio-group-with-selection"
+            (click)="getClick()"
+            [items]="resolutions"
+            [value]="resolution"
+            (onValueChanged)="onValueChanged($event)"
+            layout="horizontal">
+        </dx-radio-group>
+    </div>
+</div>
 <dx-chart
     id="chart"
-    title="Stock Price"
-    [dataSource]="getStockPrices()">
+    title="{{companyName}}"
+    [dataSource]="stockCandles">
     <dxi-series
-        name="DELL"
+        name="prices"
         openValueField="o"
         highValueField="h"
         lowValueField="l"
@@ -34,16 +47,43 @@
         location="edge"
         [customizeTooltip]="customizeTooltip">
     </dxo-tooltip>
+
 </dx-chart>
-<div class="dx-field">
-    <div class="dx-field-label">Временное разрешение</div>
-    <div class="dx-field-value">
-        <dx-radio-group #eventRadioGroup
-            id="radio-group-with-selection"
-            [items]="resolutions"
-            [value]="resolutions[0]"
-            (onValueChanged)="onValueChanged($event)"
-            layout="horizontal">
-        </dx-radio-group>
+
+<div class="date-time-fields">
+    <div class="dx-field">
+        <div class="dx-field-label">Date Interval From</div>
+        <div class="dx-field-value">
+            <dx-date-box
+                [value]="from"
+                (onValueChanged)="onDateFromChanged($event)"
+                type="datetime">
+            </dx-date-box>
+        </div>
+    </div>
+    <div class="dx-field">
+        <div class="dx-field-label">Date Interval To</div>
+        <div class="dx-field-value">
+            <dx-date-box
+                [value]="to"
+                (onValueChanged)="onDateToChanged($event)"
+                type="datetime">
+            </dx-date-box>
+        </div>
     </div>
 </div>
+
+<dx-button
+        id="button"
+        [height]="40"
+        [width]="180"
+        (onClick)="onClick($event)"
+        [visible]="stockCandles"
+        >
+        <div *dxTemplate="let data of 'content'">
+            <dx-load-indicator class='button-indicator'
+                [visible]="loadIndicatorVisible">
+            </dx-load-indicator>
+            <span class='dx-button-text'>{{buttonText}}</span>
+        </div>
+</dx-button>

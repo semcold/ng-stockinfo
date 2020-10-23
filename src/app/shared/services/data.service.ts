@@ -27,34 +27,35 @@ export class CompanyProfile {
   weburl: string;
   logo: string;
   finnhubIndustry: string;
+  symbol: string;
 }
 
-let resolutions: ListResolution[] = [{
-  subject: "1",
-  priority: "1"
+const resolutions: ListResolution[] = [{
+  subject: '1',
+  priority: '1'
 }, {
-  subject: "5",
-  priority: "5"
+  subject: '5',
+  priority: '5'
 }, {
-  subject: "15",
-  priority: "15"
+  subject: '15',
+  priority: '15'
 }, {
-  subject: "30",
-  priority: "30"
+  subject: '30',
+  priority: '30'
 }, {
-  subject: "60",
-  priority: "60"
+  subject: '60',
+  priority: '60'
 }, {
-  subject: "D",
-  priority: "D"
+  subject: 'D',
+  priority: 'D'
 },
 {
-  subject: "W",
-  priority: "W"
+  subject: 'W',
+  priority: 'W'
 },
 {
-  subject: "M",
-  priority: "M"
+  subject: 'M',
+  priority: 'M'
 },
 ];
 
@@ -63,13 +64,20 @@ let resolutions: ListResolution[] = [{
 })
 
 export class DataService {
+  constructor(private http: HttpClient) {
+    // this.newCandles.subscribe((data) => {
+    //   this.candles = data
+    //           console.log('New data', data);
+    //       });
+
+   }
+
 
   candles;
   resolution;
-
-  getResolution(): ListResolution[] {
-    return resolutions;
-  }
+  companyName;
+  dateFrom;
+  dateTo;
 
   //private newCandles = new BehaviorSubject<any[]>([]);
 
@@ -80,13 +88,10 @@ export class DataService {
 // }
   displaySymbol;
   key: string;
-  constructor(private http: HttpClient) {
-    // this.newCandles.subscribe((data) => {
-    //   this.candles = data
-    //           console.log('New data', data);
-    //       });
 
-   }
+  getResolution(): ListResolution[] {
+    return resolutions;
+  }
 
   getStockSymbol(): Observable<any> {
     return this.http.get(`${environment.APIURL}/${environment.stock}/symbol?exchange=US&token=${environment.token}`)
@@ -99,8 +104,7 @@ export class DataService {
     //     }))
     //     // .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
     // }))
-  };
-
+  }
   // getCompanyProfile(): Observable<any> {
   //   return this.http.get(`${environment.APIURL}/profile2?symbol=${symbol}&token=${environment.token}`);
   // }
@@ -131,14 +135,7 @@ export class DataService {
   // }
 
   getStockCandles(): Observable<any> {
-    return this.http.get(`${environment.APIURL}/${environment.stock}/candle?symbol=${this.displaySymbol}&resolution=30&from=1572651390&to=1572910590&token=${environment.token}`)
-      // .pipe(map((response: {[key: string]: any}) => {
-      //   return Object
-      //     .keys(response)
-      //     .map(key => ({
-      //       ...response[key]
-      //     }))
-      // }))
+    return this.http.get(`${environment.APIURL}/${environment.stock}/candle?symbol=${this.displaySymbol}&resolution=${this.resolution}&from=${this.dateFrom}&to=${this.dateTo}&token=${environment.token}`);
   }
 
 }

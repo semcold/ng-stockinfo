@@ -1,6 +1,5 @@
+
 <div class="stockdata">
-
-
     <dx-data-grid id="gridContainer"
     [dataSource]="stockSymbol"
     [masterDetail]="{ enabled: true, template: 'detail' }"
@@ -11,34 +10,36 @@
 
     <div class="input-group m-b">
         <dxo-search-panel
-        class="form-control"
-        [visible]="true"
-        [width]="340"
-        placeholder="Search...">
+            class="form-control"
+            [visible]="true"
+            [width]="340"
+            placeholder="Search...">
         </dxo-search-panel>
     </div>
 
+
     <dxi-column dataField="description" caption="Name"></dxi-column>
-    <dxi-column dataField="symbol"[width]="50"> </dxi-column>
-    <dxi-column dataField="type" [width]="50"></dxi-column>
+    <dxi-column dataField="symbol"[width]="60"> </dxi-column>
+    <dxi-column dataField="id" [width]="50"></dxi-column>
     <dxi-column dataField="currency" [width]="50"></dxi-column>
-    <!-- <div *dxTemplate="let cProfile of 'detail' | busFilter: searchStr: searchField">
 
-    </div> -->
-
-    <!-- <dxi-column dataField="BirthDate" dataType="date"></dxi-column> -->
-
-    <div *dxTemplate="let cProfile of 'detail'">
-        <div class="master-detail-caption">{{cProfile.data.description + " " + cProfile.data.displaySymbol + "'s Profile:"}}</div>
+    <div *dxTemplate="let d of 'detail'">
+        <dx-load-indicator id="large-indicator" height="60" width="60"
+            [visible]="loadIndicatorVisible"
+        >
+        </dx-load-indicator>
+        <div class="master-detail-caption">{{d.data.description + "'s Profile:"}}</div>
         <dx-data-grid
-            [dataSource]="getcProfileDataSourceStorage(cProfile.key)"
+            [visible]="!loadIndicatorVisible"
+            [dataSource]="setKey(d.key)"
             [showBorders]="true"
             [columnAutoWidth]="true"
             >
-                <dxi-column dataField="country"></dxi-column>
-                <dxi-column dataField="name"></dxi-column>
-                <dxi-column dataField="exchange"></dxi-column>
-                <dxi-column dataField="ipo"></dxi-column>
+            <dxi-column dataField="country"  [width]="50"></dxi-column>
+            <dxi-column dataField="name"></dxi-column>
+            <dxi-column dataField="exchange"></dxi-column>
+            <dxi-column dataField="ipo"></dxi-column>
+            <dxi-column dataField="marketCapitalization" [width]="90"></dxi-column>
         </dx-data-grid>
     </div>
 </dx-data-grid>

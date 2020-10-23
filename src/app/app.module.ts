@@ -8,7 +8,7 @@ import { StocksInfoComponent } from './stocks-info/stocks-info.component';
 import { DataGridComponent } from './shared/components/data-grid/data-grid.component';
 import { CandlestickComponent } from './shared/components/candlestick/candlestick.component';
 import { WebsocketComponent } from './shared/components/websocket/websocket.component';
-import { DevExtremeModule, DxButtonModule, DxDataGridModule, DxRadioGroupModule, DxRangeSelectorModule, DxTemplateModule, DxVectorMapModule } from 'devextreme-angular';
+import { DevExtremeModule, DxButtonModule, DxCalendarModule, DxCheckBoxModule, DxDataGridModule, DxDateBoxModule, DxLoadIndicatorModule, DxRadioGroupModule, DxRangeSelectorModule, DxSelectBoxModule, DxTemplateModule, DxVectorMapModule } from 'devextreme-angular';
 import { HttpClientModule } from '@angular/common/http';
 import { DataService } from './shared/services/data.service';
 import { FormsModule } from '@angular/forms';
@@ -40,8 +40,12 @@ import { DxoAggregationModule, DxoBehaviorModule, DxoGridModule, DxoScaleModule,
     DxRangeSelectorModule,
     DxoScaleModule,
     DxoGridModule,
-    DxRadioGroupModule
-
+    DxRadioGroupModule,
+    DxLoadIndicatorModule,
+    DxSelectBoxModule,
+    DxCheckBoxModule,
+    DxDateBoxModule,
+    DxCalendarModule,
   ],
   providers: [
     DataService,
