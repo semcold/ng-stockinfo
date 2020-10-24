@@ -38,7 +38,7 @@
             </dxo-format>
         </dxo-label>
     </dxi-value-axis>
-    <dxo-argument-axis [workdaysOnly]="true">
+    <dxo-argument-axis [workdaysOnly]="false">
         <dxo-label format="shortDate"></dxo-label>
     </dxo-argument-axis>
     <dxo-export [enabled]="true"></dxo-export>
@@ -72,12 +72,12 @@
         </div>
     </div>
 </div>
-
-<dx-button
+<div class="dx-button-class">
+    <dx-button
         id="button"
         [height]="40"
-        [width]="180"
-        (onClick)="onClick($event)"
+        [width]="280"
+        (onClick)="getClick()"
         [visible]="stockCandles"
         >
         <div *dxTemplate="let data of 'content'">
@@ -87,3 +87,4 @@
             <span class='dx-button-text'>{{buttonText}}</span>
         </div>
 </dx-button>
+</div>

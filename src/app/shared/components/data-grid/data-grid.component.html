@@ -8,7 +8,7 @@
     (click) = "clickRow()"
     >
 
-    <div class="input-group m-b">
+    <div class="search-panel">
         <dxo-search-panel
             class="form-control"
             [visible]="true"
@@ -20,7 +20,7 @@
 
     <dxi-column dataField="description" caption="Name"></dxi-column>
     <dxi-column dataField="symbol"[width]="60"> </dxi-column>
-    <dxi-column dataField="id" [width]="50"></dxi-column>
+    <dxi-column dataField="type" [width]="50"></dxi-column>
     <dxi-column dataField="currency" [width]="50"></dxi-column>
 
     <div *dxTemplate="let d of 'detail'">

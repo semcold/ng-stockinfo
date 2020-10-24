@@ -2,9 +2,7 @@ import { ListResolution } from './../interfaces';
 import { environment } from './../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 export class StockSymbol {
   description: string;
@@ -64,78 +62,28 @@ const resolutions: ListResolution[] = [{
 })
 
 export class DataService {
-  constructor(private http: HttpClient) {
-    // this.newCandles.subscribe((data) => {
-    //   this.candles = data
-    //           console.log('New data', data);
-    //       });
-
-   }
-
+  constructor(private http: HttpClient) {}
 
   candles;
   resolution;
   companyName;
   dateFrom;
   dateTo;
-
-  //private newCandles = new BehaviorSubject<any[]>([]);
-
-
-
-// public NewCandles(something) {
-//     this.newCandles.next([...this.newCandles.getValue(), something]);
-// }
   displaySymbol;
-  key: string;
 
   getResolution(): ListResolution[] {
     return resolutions;
   }
 
   getStockSymbol(): Observable<any> {
-    return this.http.get(`${environment.APIURL}/${environment.stock}/symbol?exchange=US&token=${environment.token}`)
-    // .pipe(map((response: {[key: string]: any}) => {
-    //   return Object
-    //     .keys(response)
-    //     .map(key => ({
-    //       ...response[key],
-    //       id: key
-    //     }))
-    //     // .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
-    // }))
+    return this.http.get(`${environment.APIURL}/${environment.stock}/symbol?exchange=US&token=${environment.token}`);
   }
-  // getCompanyProfile(): Observable<any> {
-  //   return this.http.get(`${environment.APIURL}/profile2?symbol=${symbol}&token=${environment.token}`);
-  // }
-
-  // getBySymbol(): Observable<any> {
-	// 	return this.http.get<StockSymbol>(`${environment.APIURL}/profile2?symbol=${this.displaySymbol}&token=${environment.token}`)
-	// 		.pipe(map((stockSymbol: StockSymbol) => {
-	// 			return {
-	// 				...stockSymbol,
-	// 				displaySymbol: 'AAPL'
-	// 			}
-	// 		}))
-  // }
 
   getBySymbol() {
-    //this.displaySymbol = key;
     return this.http.get<CompanyProfile>(`${environment.APIURL}/${environment.stock}/profile2?symbol=${this.displaySymbol}&token=${environment.token}`);
   }
-
-  // getBySymbol(symbol: string): Observable<StockSymbol> {
-  //   return this.http.get<StockSymbol>(`${environment.APIURL}/profile2?symbol=${symbol}&token=${environment.token}`)
-  //   .pipe(map((content: StockSymbol) => {
-  //     return {
-  //       ...content,
-  //       symbol
-  //     }
-  //   }))
-  // }
 
   getStockCandles(): Observable<any> {
     return this.http.get(`${environment.APIURL}/${environment.stock}/candle?symbol=${this.displaySymbol}&resolution=${this.resolution}&from=${this.dateFrom}&to=${this.dateTo}&token=${environment.token}`);
   }
-
 }
